@@ -1,7 +1,9 @@
 {
   "name": "relay-workshop",
-  "version": "1.0.0",
-  "author": "Sibelius Seraphini <sibeliusseraphini@gmail.com>",
+  "version": "2.0.0",
+  "author": "Sibelius Seraphini <sibeliusseraphini@gmail.com> (https://twitter.com/sseraphini)",
+  "contributors": ["Thiago Marinho <tgmarinho@gmail.com> (https://twitter.com/tgmarinho)"],
+  "description": "Learn the best practices about how to use a Fullstack Node.js, GraphQL, Relay, React, modern stack",
   "devDependencies": {
     "@babel/preset-modules": "0.1.5",
     "@types/bcryptjs": "^2.4.1",
@@ -64,16 +66,19 @@
     "jest": "29.5.0",
     "jest-environment-jsdom": "^29.0.1",
     "jest-junit": "15.0.0",
-    "lerna": "^6.0.1",
     "lint-staged": "^13.0.0",
     "os-browserify": "^0.3.0",
-    "patch-package": "^6.5.0",
     "path-browserify": "^1.0.1",
     "pre-commit": "^1.2.2",
     "prettier": "2.8.7",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "typescript": "5.0.3"
+  },
+  "dependencies": {
+    "tsup": "^5.12.6",
+    "turbo": "1.6.3",
+    "esbuild": "0.17.16"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
@@ -100,30 +105,29 @@
   },
   "scripts": {
     "b": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
-    "build:server": "yarn workspace @workshop/server build",
+    "build:server": "turbo run build --filter=@workshop/server",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "copy-envs": "cp apps/server/.env.example apps/server/.env && cp apps/web/.env.example apps/web/.env",
     "es": "node -r esbuild-register",
-    "get-token": "yarn b apps/server/scripts/getToken.ts",
+    "get-token": "pnpm run b apps/server/scripts/getToken.ts",
     "jest": "jest",
-    "lint": "yarn eslint --fix",
+    "lint": "turbo run lint",
     "lint:staged": "lint-staged",
-    "postinstall": "yarn patch-package",
-    "prettier": "prettier --write **/src/**/*.ts && prettier --write **/src/**/*.tsx",
-    "relay": "lerna run relay --parallel --ignore @workshop/0* --ignore @workshop/1*",
-    "seed": "yarn workspace @workshop/server seed",
-    "server": "yarn workspace @workshop/server start",
-    "server:serve": "yarn workspace @workshop/server serve",
-    "start": "concurrently --kill-others \"yarn workspace @workshop/web start\" \"yarn workspace @workshop/server start\"",
-    "update-schema": "yarn w apps/server/scripts/updateSchema.ts",
-    "schema": "yarn w apps/server/scripts/updateSchema.ts",
-    "w": "yarn b webpackx.ts",
-    "web": "yarn workspace @workshop/web start",
+    "prettier": "turbo run prettier --write **/src/**/*.ts && prettier --write **/src/**/*.tsx",
+    "relay": "pnpm run relay --parallel --ignore @workshop/0* --ignore @workshop/1*",
+    "seed": "pnpm run workspace @workshop/server seed",
+    "server": "turbo run start --filter=@workshop/server",
+    "server:serve": "turbo run --filter=@workshop/server",
+    "start": "turbo run start --filter=@workshop/web --filter=@workshop/server",
+    "update-schema": "pnpm run w apps/server/scripts/updateSchema.ts",
+    "schema": "pnpm run w apps/server/scripts/updateSchema.ts",
+    "w": "pnpm run b webpackx.ts",
+    "web": "turbo run start --filter @workshop/web",
     "web-react-router": "yarn workspace @workshop/web-react-router start",
-    "next:dev": "yarn workspace @workshop/next dev",
-    "next:build": "yarn workspace @workshop/next build",
-    "nextapp:dev": "yarn workspace @workshop/nextapp dev",
-    "nextapp:build": "yarn workspace @workshop/nextapp build"
+    "next:dev": "turbo run dev --filter=@workshop/next",
+    "next:build": "turbo run build --filter=@workshop/next",
+    "nextapp:dev": "turbo run dev --filter=@workshop/nextapp",
+    "nextapp:build": "turbo run build --filter=@workshop/nextapp"
   },
   "workspaces": {
     "packages": [
@@ -132,5 +136,9 @@
       "workshop/*",
       "solutions/*"
     ]
+  },
+  "packageManager": "pnpm@7.14.2",
+  "engines": {
+    "node": ">=16"
   }
 }

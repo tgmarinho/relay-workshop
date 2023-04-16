@@ -67,7 +67,7 @@
     "razzle:prod": "NODE_ENV=production node build/server.js",
     "razzle:start": "node_modules/.bin/razzle start",
     "relay": "node_modules/.bin/relay-compiler",
-    "start": "webpack serve --hot --config webpack.dev.config.js",
+    "start": "esbuild ./src --outdir=dist --bundle --servedir=dist --external:@workshop/route --external:koa-logger --platform=node",
     "build": "webpack --config webpack.prod.config.js"
   }
 }
