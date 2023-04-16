@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize]
+
+env:
+  # NODE_ENV: ${{ secrets.NODE_ENV }}
+
+  ## ALL ENVS
+
+  ## CROW APP
+  NEXT_PUBLIC_FIREBASE_APIKEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_APIKEY }}
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+  NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+  NEXT_PUBLIC_MESSAGE_HASH: ${{ secrets.NEXT_PUBLIC_MESSAGE_HASH }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NEXT_PUBLIC_INDEXER_URL: ${{ secrets.NEXT_PUBLIC_INDEXER_URL }}
+  SECRET_SYNC_KEY: ${{ secrets.SECRET_SYNC_KEY }}
+
+
+  ## CONTRACT
+  UNICROW_ADDRESS: ${{ secrets.UNICROW_ADDRESS }}
+  UNICROW_DISPUTE_ADDRESS: ${{ secrets.UNICROW_DISPUTE_ADDRESS }}
+  UNICROW_ARBITRATOR_ADDRESS: ${{ secrets.UNICROW_ARBITRATOR_ADDRESS }}
+  CROW_REWARDS_ADDRESS: ${{ secrets.CROW_REWARDS_ADDRESS }}
+  DAI_ADDRESS: ${{ secrets.DAI_ADDRESS }}
+  USDT_ADDRESS: ${{ secrets.USDT_ADDRESS }}
+  SCROW_ADDRESS: ${{ secrets.SCROW_ADDRESS }}
+  USDC_ADDRESS: ${{ secrets.USDC_ADDRESS }}
+  UNICROW_CLAIM_ADDRESS: ${{ secrets.UNICROW_CLAIM_ADDRESS }}
+
+
+jobs:
+  build:
+      name: Build and Test
+      timeout-minutes: 15
+      runs-on: ${{ matrix.os }}
+      # To use Remote Caching, uncomment the next lines and follow the steps below.
+      # env:
+      #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      strategy:
+        matrix:
+          os: [ubuntu-latest]
+
+      steps:
+        - name: Check out code
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 2
+
+        - uses: pnpm/action-setup@v2.0.1
+          with:
+            version: 6.32.2
+
+        - name: Setup Node.js environment
+          uses: actions/setup-node@v2
+          with:
+            node-version: 16
+            cache: 'pnpm'
+
+        - name: Install dependencies
+          run: pnpm install
+
+        - name: Build
+          run: pnpm build
+
+        - name: Test
+          run: pnpm test
